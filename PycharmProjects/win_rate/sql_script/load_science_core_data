@@ -1,0 +1,59 @@
+SET hive.exec.dynamic.partition.mode=nonstrict;
+SET tez.queue.name=kpi;
+use weiqingyu;
+
+drop table if exists win_rate_sample4;
+
+create table win_rate_sample5 (
+    r_timestamp bigint, uid string, request_id string, tsrc_id bigint,
+    sp_iab_category array<string>, user_iab_category array<string>, city string,
+    state string, zip string, sl_adjusted_confidence int, fp_sic string,
+    uid_type string, carrier string, device_type string, pub_type string,
+    os string, device_make string, bundle string, sp_user_age int,
+    sp_user_gender string, int_banner boolean, isp string, too_freq_uid boolean,
+    r_s_info string, banner_size string, category string, adgroup_id bigint,
+    ad_impression bigint, winbid bigint, pub_bid_floor double, adv_bid_rates string,
+    pub_bid_rates string, xad_revenue double, pub_revenue double, ad_vendor_id string,
+    creative_id string, creative_type string, adomain string, device_model string)
+partitioned by (pub_id bigint, dt string, prod_type string) ;
+
+insert overwrite table win_rate_sample5 partition(pub_id, dt, prod_type)
+select r_timestamp, uid, request_id, tsrc_id, sp_iab_category,
+user_iab_category, city, state, zip, sl_adjusted_confidence,
+fp_sic, uid_type, carrier, device_type, pub_type, os, device_make,
+bundle, sp_user_age, sp_user_gender, int_banner, isp, too_freq_uid,
+r_s_info, banner_size, category, adgroup_id, ad_impression, winbid,
+pub_bid_floor, adv_bid_rates, pub_bid_rates, xad_revenue, pub_revenue, ad_vendor_id,
+creative_id, creative_type, adomain, device_model string, pub_id, dt, prod_type
+from default.science_core_orc
+where dt between '2019-04-01' and '2019-04-15' and cntry='us' and fill='fill'
+and prod_type in ('exchange','display') and pub_id not in (
+    select id from canliang.privacy_publisher_mode_2 b
+);
+
+create table if not exists win_rate_sample3_1 as
+select * from win_rate_sample3 where prod_type='exchange' and rand()<0.001;
+
+create table if not exists win_rate_sample3_2 as
+select * from win_rate_sample3 where prod_type='exchange' and rand()<0.002;
+
+create table if not exists win_rate_sample3_3 as
+select * from win_rate_sample3 where prod_type='exchange' and rand()<0.003;
+
+create table if not exists win_rate_sample3_4 as
+select * from win_rate_sample3 where prod_type='exchange' and rand()<0.004;
+
+create table if not exists win_rate_sample3_10 as
+select * from win_rate_sample3 where prod_type='exchange' and rand()<0.01;
+
+create table if not exists win_rate_sample3_dis_1 as
+select * from win_rate_sample3 where prod_type='display' and rand()<0.1;
+
+create table if not exists win_rate_sample3_dis_2 as
+select * from win_rate_sample3 where prod_type='display' and rand()<0.2;
+
+create table if not exists win_rate_sample3_dis_3 as
+select * from win_rate_sample3 where prod_type='display' and rand()<0.3;
+
+create table if not exists win_rate_sample3_dis_4 as
+select * from win_rate_sample3 where prod_type='display' and rand()<0.4;

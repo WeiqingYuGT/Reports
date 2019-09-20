@@ -1,0 +1,4 @@
+#-------------------------
+# Win Rate (Weiqing Yu)
+#-------------------------
+0 2 * * * cd /media/ephemeral0/xad/weiqing/win_rate;spark-submit --master yarn --num-executors 40 --queue weiqing --driver-memory 10g --executor-memory 10g --executor-cores 2 --conf spark.driver.maxResultSize=7g  runner.py -t daily -d $(date -d "5 days ago" +'%Y-%m-%d')

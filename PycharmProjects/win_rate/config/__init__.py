@@ -1,0 +1,1 @@
+from .properties import feature_list, feature_list_bk, target_set, neptune_vendor_list
